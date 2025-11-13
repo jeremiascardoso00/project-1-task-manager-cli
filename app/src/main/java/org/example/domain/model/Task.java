@@ -47,7 +47,7 @@ public class Task {
 
     //validation methods
     private String validateTitle(String newTitle) {
-        if (newTitle == null || title.isBlank()) throw new IllegalArgumentException("Title cannot be blank");
+        if (newTitle == null || newTitle.isBlank()) throw new IllegalArgumentException("Title cannot be blank");
         return newTitle;
     }
     private String validateDescription(String newDescription) {
