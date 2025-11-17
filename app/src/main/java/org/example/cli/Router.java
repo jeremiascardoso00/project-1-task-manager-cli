@@ -1,7 +1,8 @@
 package org.example.cli;
 
 import org.example.application.usecases.CreateTaskUseCase;
-import org.example.infrastructure.JsonRepository;
+import org.example.infrastructure.JsonBoardRepository;
+import org.example.infrastructure.JsonTaskRepository;
 
 import java.util.Scanner;
 
@@ -29,7 +30,7 @@ public class Router {
             switch (command) {
                 case "1","create" -> SetupCreateHandler();
 //                case "2","delete" -> System.out.println("delete");
-//                case "3","list" -> service.listTasks().forEach(System.out::println);
+//                case "3","list" -> Arrays.asList(1).forEach(System.out::println);
 
                 default -> System.out.println("Unknown command");
             }
@@ -38,11 +39,16 @@ public class Router {
 
     private void SetupCreateHandler() {
         //using jsonRepository
-        JsonRepository repository = new JsonRepository();
+        JsonTaskRepository taskRepository = new JsonTaskRepository();
+        JsonBoardRepository boardRepository = new JsonBoardRepository();
 
         //using createTaskUseCase
-        CreateTaskUseCase createTaskUseCase = new CreateTaskUseCase(repository);
-        CreateCommandHandler commandHandler = new CreateCommandHandler(this.inputScanner,
+        CreateTaskUseCase createTaskUseCase = new CreateTaskUseCase(
+                taskRepository,
+                boardRepository);
+
+        CreateCommandHandler commandHandler = new CreateCommandHandler(
+                this.inputScanner,
                 createTaskUseCase);
         commandHandler.handleCreate();
 
