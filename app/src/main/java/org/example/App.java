@@ -3,12 +3,58 @@
  */
 package org.example;
 
- import org.example.cli.Router;
+ import org.example.application.usecases.*;
+ import org.example.domain.model.BoardRepository;
+ import org.example.domain.model.TaskRepository;
+ import org.example.infrastructure.cli.BoardMenuHandler;
+ import org.example.infrastructure.cli.MainMenuHandler;
+ import org.example.infrastructure.cli.TaskMenuHandler;
+ import org.example.infrastructure.handlers.board.CreateBoardCommandHandler;
+ import org.example.infrastructure.handlers.board.GetAvailableBoardsHandler;
+ import org.example.infrastructure.handlers.task.CreateTaskCommandHandler;
+ import org.example.infrastructure.persistence.JsonBoardRepository;
+ import org.example.infrastructure.persistence.JsonTaskRepository;
+
+ import java.util.Scanner;
 
  public class App {
 
     public static void main(String[] args) {
-        Router router = new Router();
-        router.StartListening();
+        start();
     }
+
+     public static void start() {
+         Scanner scanner = new Scanner(System.in);
+
+         // Setup all dependencies in App (Composition Root)
+         MainMenuHandler mainMenu = setupDependencies(scanner);
+
+         // Start application
+         mainMenu.showMenu();
+     }
+
+     private static MainMenuHandler setupDependencies(Scanner scanner) {
+         // 1. Setup Repositories
+         TaskRepository taskRepository = new JsonTaskRepository();
+         BoardRepository boardRepository = new JsonBoardRepository();
+
+         // 2. Setup Use Cases
+         CreateTaskUseCase createTaskUseCase = new CreateTaskUseCaseImpl(taskRepository);
+         GetAvailableBoardsUseCase getAvailableBoardsUseCase = new GetAvailableBoardsUseCaseImpl(boardRepository);
+         CreateBoardUseCase createBoardUseCase = new CreateBoardUseCaseImpl(boardRepository);
+
+         // 3. Setup Command Handlers
+         CreateTaskCommandHandler createTaskHandler = new CreateTaskCommandHandler(
+                 scanner, createTaskUseCase, getAvailableBoardsUseCase);
+         CreateBoardCommandHandler createBoardHandler = new CreateBoardCommandHandler(
+                 scanner, createBoardUseCase);
+         GetAvailableBoardsHandler getBoardHandler = new GetAvailableBoardsHandler(getAvailableBoardsUseCase);
+
+         // 4. Setup Menu Handlers
+         TaskMenuHandler taskMenuHandler = new TaskMenuHandler(scanner, createTaskHandler);
+         BoardMenuHandler boardMenuHandler = new BoardMenuHandler(scanner, createBoardHandler, getBoardHandler);
+
+         // 5. Setup Main Menu
+         return new MainMenuHandler(scanner, taskMenuHandler, boardMenuHandler);
+     }
 }

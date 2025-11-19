@@ -21,8 +21,8 @@ public class Task {
         this.createdAt = LocalDateTime.now();
     }
 
-    public static Task newTask(String title, String description, Status status, Priority priority) {
-        return new Task(null, title, description,status, priority);
+    public static Task newTask(String id, String title, String description, Status status, Priority priority) {
+        return new Task(id, title, description,status, priority);
     }
 
     //getters

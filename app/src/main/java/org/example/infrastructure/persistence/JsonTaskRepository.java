@@ -1,12 +1,12 @@
-package org.example.infrastructure;
+package org.example.infrastructure.persistence;
 
 import org.example.domain.model.Task;
 import org.example.domain.model.TaskRepository;
 
-public class JsonRepository implements TaskRepository {
+public class JsonTaskRepository implements TaskRepository {
 
     @Override
-    public void Save(Task newTask){
+    public void save(Task newTask){
         System.out.println(newTask);
     }
 }
