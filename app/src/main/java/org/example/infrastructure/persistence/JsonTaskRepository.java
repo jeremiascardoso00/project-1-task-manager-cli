@@ -6,7 +6,7 @@ import org.example.domain.model.TaskRepository;
 public class JsonTaskRepository implements TaskRepository {
 
     @Override
-    public void save(Task newTask){
-        System.out.println(newTask);
+    public Task save(Task newTask){
+        return newTask;
     }
 }

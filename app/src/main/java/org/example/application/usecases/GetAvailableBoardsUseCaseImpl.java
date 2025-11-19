@@ -17,11 +17,7 @@ public class GetAvailableBoardsUseCaseImpl implements GetAvailableBoardsUseCase 
 
     @Override
     public GetAvailableBoardsResult execute() {
-
         try {
-            //only have one user by te moment, so all the boards are her/his/they property
-            this.boardRepository.findAll();
-
             List<Board> boards = this.boardRepository.findAll();
 
             if (boards == null || boards.isEmpty()){
