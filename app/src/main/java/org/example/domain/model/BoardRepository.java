@@ -1,5 +1,8 @@
 package org.example.domain.model;
 
+import java.util.List;
+
 public interface BoardRepository {
-    void Save(Board board);
+    Board save(Board board);
+    List<Board> findAll();
 }

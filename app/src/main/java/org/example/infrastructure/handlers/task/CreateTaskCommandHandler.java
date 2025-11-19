@@ -1,23 +1,27 @@
-package org.example.cli;
+package org.example.infrastructure.handlers.task;
 
 import org.example.application.usecases.CreateTaskUseCase;
+import org.example.application.usecases.GetAvailableBoardsUseCase;
+import org.example.application.usecases.models.responses.GetAvailableBoardsResult;
 import org.example.domain.model.Board;
 import org.example.domain.model.Priority;
 import org.example.domain.model.Status;
 import org.example.domain.model.Task;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class CreateCommandHandler {
+public class CreateTaskCommandHandler {
     private final Scanner inputScanner;
     private final CreateTaskUseCase createTaskUseCase;
+    private final GetAvailableBoardsUseCase getAvailableBoardsUseCase;
+
     private List<Board> availableBoards;
 
-    public CreateCommandHandler(Scanner inputScanner, CreateTaskUseCase createTaskUseCase) {
+    public CreateTaskCommandHandler(Scanner inputScanner, CreateTaskUseCase createTaskUseCase, GetAvailableBoardsUseCase getAvailableBoardsUseCase) {
         this.inputScanner = inputScanner;
         this.createTaskUseCase = createTaskUseCase;
+        this.getAvailableBoardsUseCase = getAvailableBoardsUseCase;
         this.availableBoards = null;
     }
 
@@ -32,9 +36,16 @@ public class CreateCommandHandler {
 
         Priority priority = selectPriority();
 
-        Board selectedBoard = selectBoard();
+        GetAvailableBoardsResult getAvailableBoardsResult = getAvailableBoardsUseCase.execute();
 
-        Task task = this.createTaskUseCase.Execute(title, description, status, priority, selectedBoard);
+        //move outside CreateTaskCommandHandler
+        if (getAvailableBoardsResult.hasBoards()) {
+            this.availableBoards = getAvailableBoardsResult.getBoards();
+            selectBoard();
+        }
+
+
+        Task task = this.createTaskUseCase.execute(title, description, status, priority);
         System.out.println("Task created successfully: " + task.getTitle());
     }
 
@@ -82,9 +93,6 @@ public class CreateCommandHandler {
 
     private Board selectBoard() {
 
-        //now using mock, the must be a service call
-        this.availableBoards = createMockBoards();
-
         System.out.println("Available boards:");
         for (int i = 0; i < availableBoards.size(); i++) {
             Board board = availableBoards.get(i);
@@ -111,21 +119,5 @@ public class CreateCommandHandler {
         return selectedBoard;
     }
 
-    private List<Board> createMockBoards() {
-        List<Board> mockBoards = new ArrayList<>();
 
-        mockBoards.add(Board.newBoard("Backlog"));
-        mockBoards.add(Board.newBoard("In Progress"));
-        mockBoards.add(Board.newBoard("Review"));
-        mockBoards.add(Board.newBoard("Done"));
-        mockBoards.add(Board.newBoard("Urgent Tasks"));
-
-        Task task1 = Task.newTask(null,"Design Database", "Create ER diagram", Status.TODO, Priority.HIGH);
-        Task task2 = Task.newTask(null,"Implement API", "REST endpoints", Status.IN_PROGRESS, Priority.MEDIUM);
-
-        mockBoards.get(0).addTask(task1);
-        mockBoards.get(1).addTask(task2);
-
-        return mockBoards;
-    }
 }

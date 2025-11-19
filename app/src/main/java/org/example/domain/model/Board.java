@@ -2,19 +2,21 @@ package org.example.domain.model;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public class Board {
 
     private final String id;
     private String name;
-    private ArrayList<Task> taskArrayList;
+    private List<Task> taskList;
     private final LocalDateTime createdAt;
 
-    private Board(String id, String name, ArrayList<Task> taskArrayList){
+    private Board(String id, String name, List<Task> taskList){
         this.id = (id == null) ? UUID.randomUUID().toString(): id;
-        this.name = name;
-        this.taskArrayList = (taskArrayList == null) ? new ArrayList<>() : taskArrayList; ;
+        this.name = validateName(name);
+        this.taskList = (taskList == null) ? new ArrayList<>() : taskList; ;
         this.createdAt = LocalDateTime.now();
     }
 
@@ -22,46 +24,51 @@ public class Board {
         return new Board(null, name, null);
     }
 
-    public static Board newBoard(String name, ArrayList<Task> taskArrayList) {
-        return new Board(null, name, taskArrayList);
+    public static Board newBoard(String name, List<Task> taskList) {
+        return new Board(null, name, taskList);
     }
 
-    public static Board newBoard(String id, String name, ArrayList<Task> taskArrayList) {
-        return new Board(id, name, taskArrayList);
+    public static Board newBoard(String id, String name, List<Task> taskList) {
+        return new Board(id, name, taskList);
+    }
+
+    private String validateName(String name) {
+        if (name == null) {
+            throw new IllegalArgumentException("Board name cannot be null");
+        }
+
+        if (name.isBlank()) {
+            throw new IllegalArgumentException("Board name cannot be blank");
+        }
+
+        return name.trim();
     }
 
     public void addTask(Task task){
-        this.taskArrayList.add(task);
+        this.taskList.add(task);
     }
 
     public boolean removeTask(String taskId) {
-         return taskArrayList.removeIf(task -> task.getId().equals(taskId));
+         return taskList.removeIf(task -> task.getId().equals(taskId));
     }
 
-    public ArrayList<Task> updateTaskList(ArrayList<Task> taskArrayList) {
-        this.taskArrayList = taskArrayList;
-        return this.taskArrayList;
+    public List<Task> updateTaskList(ArrayList<Task> taskArrayList) {
+        this.taskList = taskArrayList;
+        return this.taskList;
     }
 
-    public ArrayList<Task> getAllTasks() {
-        return this.taskArrayList;
+    public List<Task> getAllTasks() {
+        return this.taskList;
     }
 
-    public Task getTaskById(String id) {
-        for (Task task : taskArrayList) {
-            if (task.getId().equals(id)) {
-                return task;
-            }
-        }
-        return null;
+    public Optional<Task> getTaskById(String id) {
+        return this.taskList.stream().
+                filter(task -> task.getId().equals(id)).
+                findFirst();
     }
 
     public Integer getTaskCount() {
-        return this.taskArrayList.size();
-    }
-
-    public boolean containsTask(String taskId) {
-        return getTaskById(taskId) != null;
+        return this.taskList.size();
     }
 
     public String getId() {
@@ -85,7 +92,7 @@ public class Board {
         return "Board{" +
                 "id='" + id + '\'' +
                 ", name='" + name + '\'' +
-                ", taskCount=" + taskArrayList.size() +
+                ", taskCount=" + taskList.size() +
                 ", createdAt=" + createdAt +
                 '}';
     }
