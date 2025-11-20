@@ -2,20 +2,47 @@ package org.example.infrastructure.persistence;
 
 import org.example.domain.model.*;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class JsonBoardRepository implements BoardRepository {
+public class JsonBoardRepository extends JsonRepository<Board> implements BoardRepository {
+
+    public JsonBoardRepository(Path filePath) {
+        super(filePath, Board.class);
+    }
 
     @Override
     public Board save(Board newBoard){
+
+        List<Board> boardList = loadAll();
+
+        var found = false;
+        for (int i=0; i < boardList.size(); i++){
+            if (boardList.get(i).getId().equals(newBoard.getId())){
+                boardList.set(i, newBoard);
+                found = true;
+                break;
+            }
+        }
+
+        if (found){
+            boardList.add(newBoard);
+        }
+
+        saveAll(boardList);
+
         return newBoard;
     }
 
     @Override
     public List<Board> findAll(){
-        List<Board> boards = createMockBoards();
+        List<Board> boards = loadAll();
+
+        System.out.println(boards);
+
+
         return boards != null? boards: Collections.emptyList();
     }
 
@@ -31,21 +58,4 @@ public class JsonBoardRepository implements BoardRepository {
         return allTaskList;
     }
 
-    private List<Board> createMockBoards() {
-        List<Board> mockBoards = new ArrayList<>();
-
-        mockBoards.add(Board.newBoard("Backlog"));
-        mockBoards.add(Board.newBoard("In Progress"));
-        mockBoards.add(Board.newBoard("Review"));
-        mockBoards.add(Board.newBoard("Done"));
-        mockBoards.add(Board.newBoard("Urgent Tasks"));
-
-        Task task1 = Task.newTask(null,"Design Database", "Create ER diagram", Status.TODO, Priority.HIGH);
-        Task task2 = Task.newTask(null,"Implement API", "REST endpoints", Status.IN_PROGRESS, Priority.MEDIUM);
-
-        mockBoards.get(0).addTask(task1);
-        mockBoards.get(1).addTask(task2);
-
-        return mockBoards;
-    }
 }

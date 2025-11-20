@@ -18,10 +18,11 @@ public class GetAvailableBoardsHandler {
 
     public void handleGet() {
         GetAvailableBoardsResult getAvailableBoardsResult = getAvailableBoardsUseCase.execute();
-        if (getAvailableBoardsResult.hasBoards()) {
-            System.out.println(getAvailableBoardsResult.getBoards());
+        System.out.println(getAvailableBoardsResult.getMessage());
+        if (getAvailableBoardsResult.hasItems()) {
+            System.out.println(getAvailableBoardsResult.getItems());
         } else {
-            getAvailableBoardsResult.error("Boards not found");
+            System.out.println(getAvailableBoardsResult.error("Boards not found"));
         }
     }
 
