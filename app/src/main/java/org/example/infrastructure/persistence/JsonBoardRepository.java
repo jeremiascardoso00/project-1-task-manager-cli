@@ -17,17 +17,16 @@ public class JsonBoardRepository extends JsonRepository<Board> implements BoardR
     public Board save(Board newBoard){
 
         List<Board> boardList = loadAll();
+        System.out.println(boardList);
 
-        var found = false;
-        for (int i=0; i < boardList.size(); i++){
-            if (boardList.get(i).getId().equals(newBoard.getId())){
-                boardList.set(i, newBoard);
-                found = true;
-                break;
-            }
-        }
+        var found = boardList.
+                stream().
+                anyMatch(item -> item.getId().
+                        equals(newBoard.getId()));
 
-        if (found){
+        System.out.println(found);
+
+        if (!found){
             boardList.add(newBoard);
         }
 
@@ -39,10 +38,7 @@ public class JsonBoardRepository extends JsonRepository<Board> implements BoardR
     @Override
     public List<Board> findAll(){
         List<Board> boards = loadAll();
-
         System.out.println(boards);
-
-
         return boards != null? boards: Collections.emptyList();
     }
 

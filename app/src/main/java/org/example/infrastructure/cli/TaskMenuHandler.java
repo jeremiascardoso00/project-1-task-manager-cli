@@ -23,17 +23,18 @@ public class TaskMenuHandler {
         while (true) {
             System.out.println("Please select the action: ");
             System.out.println("1 - create");
-            System.out.println("2 - delete");
-            System.out.println("3 - list");
+//            System.out.println("2 - delete");
+            System.out.println("2 - list");
+            System.out.println("3 - back");
 
             System.out.println("> ");
             String command = this.inputScanner.nextLine();
 
-            if (command.equals("exit")) break;
+            if (command.equals("3")) break;
             switch (command) {
                 case "1","create" -> createTaskCommandHandler.handleCreate();
-                case "2","delete" -> System.out.println("delete");
-                case "3","list" -> getTaskListCommandHandler.handleGet();
+//                case "2","delete" -> System.out.println("delete");
+                case "2","list" -> getTaskListCommandHandler.handleGet();
 
                 default -> System.out.println("Unknown command");
             }

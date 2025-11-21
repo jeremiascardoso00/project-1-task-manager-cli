@@ -1,5 +1,6 @@
 package org.example.infrastructure.persistence;
 
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.infrastructure.persistence.jsonconfig.JsonConfig;
 
@@ -35,14 +36,16 @@ public abstract class JsonRepository<T> {
     protected List<T> loadAll() {
         try {
             byte[] jsonData = Files.readAllBytes(filePath);
-            System.out.println(filePath);
+            System.out.println(jsonData);
 
             if (jsonData.length == 0) {
                 return new ArrayList<>();
             }
 
-            return objectMapper.readValue(jsonData,
-                    objectMapper.getTypeFactory().constructCollectionType(List.class, type));
+            JavaType javaType = objectMapper.getTypeFactory()
+                    .constructCollectionType(List.class, type);
+
+            return objectMapper.readValue(jsonData, javaType);
 
         } catch (Exception e) {
             throw new RuntimeException("Error loading data from: " + filePath, e);
@@ -52,9 +55,7 @@ public abstract class JsonRepository<T> {
     protected void saveAll(List<T> items) {
         try {
             String json = objectMapper.writeValueAsString(items);
-
             Files.write(filePath, json.getBytes());
-            System.out.println(filePath);
         } catch (Exception e) {
             throw new RuntimeException("Error saving data to: " + filePath, e);
         }

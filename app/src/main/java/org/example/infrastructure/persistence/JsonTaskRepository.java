@@ -4,6 +4,7 @@ import org.example.domain.model.Task;
 import org.example.domain.model.TaskRepository;
 
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.List;
 
 public class JsonTaskRepository extends JsonRepository<Task> implements TaskRepository {
@@ -26,7 +27,7 @@ public class JsonTaskRepository extends JsonRepository<Task> implements TaskRepo
             }
         }
 
-        if (found){
+        if (!found){
             taskList.add(newTask);
         }
 
@@ -37,6 +38,7 @@ public class JsonTaskRepository extends JsonRepository<Task> implements TaskRepo
 
     @Override
     public List<Task> findAll() {
-        return loadAll();
+        List<Task> tasks = loadAll();
+        return tasks != null? tasks: Collections.emptyList();
     }
 }

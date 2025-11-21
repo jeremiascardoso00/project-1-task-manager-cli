@@ -17,7 +17,7 @@ public class GetTaskListCommandHandler {
         System.out.println(getTaskResult.getMessage());
 
         if (getTaskResult.hasItems()) {
-            System.out.println(getTaskResult.getItems());
+            System.out.println(getTaskResult.getItems().toString() + "\n");
         } else {
             System.out.println(getTaskResult.error("Tasks not found"));
         }

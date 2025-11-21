@@ -1,5 +1,8 @@
 package org.example.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,14 +13,25 @@ public class Board {
 
     private final String id;
     private String name;
-    private List<Task> taskList;
+    private List<Task> allTasks;
     private final LocalDateTime createdAt;
 
     private Board(String id, String name, List<Task> taskList){
         this.id = (id == null) ? UUID.randomUUID().toString(): id;
         this.name = validateName(name);
-        this.taskList = (taskList == null) ? new ArrayList<>() : taskList; ;
+        this.allTasks = (taskList == null) ? new ArrayList<>() : taskList;
         this.createdAt = LocalDateTime.now();
+    }
+
+    @JsonCreator
+    private Board(@JsonProperty("id") String id,
+                  @JsonProperty("name") String name,
+                  @JsonProperty("allTasks") List<Task> taskList,
+                  @JsonProperty("createdAt") LocalDateTime createdAt){
+        this.id = id;
+        this.name = validateName(name);
+        this.allTasks =taskList;
+        this.createdAt = createdAt;
     }
 
     public static Board newBoard(String name) {
@@ -45,30 +59,26 @@ public class Board {
     }
 
     public void addTask(Task task){
-        this.taskList.add(task);
+        this.allTasks.add(task);
     }
 
     public boolean removeTask(String taskId) {
-         return taskList.removeIf(task -> task.getId().equals(taskId));
+         return allTasks.removeIf(task -> task.getId().equals(taskId));
     }
 
     public List<Task> updateTaskList(ArrayList<Task> taskArrayList) {
-        this.taskList = taskArrayList;
-        return this.taskList;
-    }
-
-    public List<Task> getAllTasks() {
-        return this.taskList;
+        this.allTasks = taskArrayList;
+        return this.allTasks;
     }
 
     public Optional<Task> getTaskById(String id) {
-        return this.taskList.stream().
+        return this.allTasks.stream().
                 filter(task -> task.getId().equals(id)).
                 findFirst();
     }
 
     public Integer getTaskCount() {
-        return this.taskList.size();
+        return this.allTasks.size();
     }
 
     public String getId() {
@@ -77,6 +87,10 @@ public class Board {
 
     public String getName() {
         return name;
+    }
+
+    public List<Task> getAllTasks() {
+        return this.allTasks;
     }
 
     public void setName(String name) {
@@ -92,7 +106,7 @@ public class Board {
         return "Board{" +
                 "id='" + id + '\'' +
                 ", name='" + name + '\'' +
-                ", taskCount=" + taskList.size() +
+                ", taskCount=" + allTasks.size() +
                 ", createdAt=" + createdAt +
                 '}';
     }

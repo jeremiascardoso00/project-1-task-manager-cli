@@ -23,7 +23,7 @@ public class GetTasksUseCaseImpl implements GetTasksUseCase{
                 return GetTaskResult.empty("No tasks available. Would you like to create one?");
             }
 
-            return GetTaskResult.success(tasks, "Found " + tasks.size() + " tasks(s)");
+            return GetTaskResult.success(tasks, "Found " + tasks.size() + " tasks(s)\n");
         } catch (Exception e) {
             return GetTaskResult.error("Error loading tasks: " + e.getMessage());
         }
