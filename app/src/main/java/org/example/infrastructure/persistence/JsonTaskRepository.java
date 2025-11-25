@@ -1,11 +1,14 @@
 package org.example.infrastructure.persistence;
 
+import org.example.application.queries.TaskQuery;
 import org.example.domain.model.Task;
 import org.example.domain.model.TaskRepository;
 
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class JsonTaskRepository extends JsonRepository<Task> implements TaskRepository {
 
@@ -40,5 +43,17 @@ public class JsonTaskRepository extends JsonRepository<Task> implements TaskRepo
     public List<Task> findAll() {
         List<Task> tasks = loadAll();
         return tasks != null? tasks: Collections.emptyList();
+    }
+
+    @Override
+    public List<Task> findWithFilters(TaskQuery query){
+
+        List<Task> tasks = loadAll();
+
+        Stream<Task> taskStream = tasks.stream();
+
+        Stream<Task> filteredStream = query.apply(taskStream);
+
+        return filteredStream.collect(Collectors.toList());
     }
 }
