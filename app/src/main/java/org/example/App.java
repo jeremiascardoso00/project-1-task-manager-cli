@@ -53,7 +53,7 @@ package org.example;
                  scanner, createTaskUseCase, getAvailableBoardsUseCase);
          CreateBoardCommandHandler createBoardHandler = new CreateBoardCommandHandler(
                  scanner, createBoardUseCase);
-         GetAvailableBoardsHandler getBoardHandler = new GetAvailableBoardsHandler(getAvailableBoardsUseCase);
+         GetAvailableBoardsHandler getBoardHandler = new GetAvailableBoardsHandler(scanner, getAvailableBoardsUseCase);
          GetTaskListCommandHandler getTaskListCommandHandler = new GetTaskListCommandHandler(scanner,getTasksUseCase);
 
          // 4. Setup Menu Handlers

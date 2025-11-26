@@ -17,8 +17,24 @@ public class GetAvailableBoardsUseCaseImpl implements GetAvailableBoardsUseCase 
 
     @Override
     public GetAvailableBoardsResult execute() {
+        return execute(null, null);
+    }
+
+    @Override
+    public GetAvailableBoardsResult execute(Predicate<Board> filter, Comparator<Board> sorter) {
         try {
-            List<Board> boards = this.boardRepository.findAll();
+            List<Board> boards;
+            if (filter == null && sorter == null) {
+                boards = this.boardRepository.findAll();
+            } else {
+                if (filter == null) {
+                    filter = board -> true;
+                }
+                if (sorter == null) {
+                    sorter = org.example.application.queries.BoardQuery.sortByCreationDateDesc();
+                }
+                boards = this.boardRepository.findWithFilters(filter, sorter);
+            }
 
             if (boards == null || boards.isEmpty()){
                 return GetAvailableBoardsResult.empty("No boards available. Would you like to create one?");
