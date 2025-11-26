@@ -2,8 +2,6 @@ package org.example.application.usecases;
 
 import org.example.application.queries.TaskQuery;
 import org.example.application.usecases.models.responses.GetTaskResult;
-import org.example.domain.model.Priority;
-import org.example.domain.model.Status;
 import org.example.domain.model.Task;
 import org.example.domain.model.TaskRepository;
 
@@ -20,25 +18,24 @@ public class GetTasksUseCaseImpl implements GetTasksUseCase{
     }
 
     @Override
-    public GetTaskResult execute() {
+    public GetTaskResult execute(Predicate<Task> filter, Comparator<Task> sorter) {
         try {
-            List<Task> tasks = taskRepository.findAll();
+            List<Task> tasks;
+            if (filter == null && sorter == null) {
+                tasks = taskRepository.findAll();
+            } else {
+                if (filter == null) {
+                    filter = task -> true;
+                }
+                if (sorter == null) {
+                    sorter = TaskQuery.sortByCreationDateDesc();
+                }
+                tasks = taskRepository.findWithFilters(filter, sorter);
+            }
 
             if (tasks == null || tasks.isEmpty()){
                 return GetTaskResult.empty("No tasks available. Would you like to create one?");
             }
-
-            Predicate<Task> byStatus = TaskQuery.byStatus(Status.DONE);
-            Predicate<Task> byPriority = TaskQuery.byStatus(Status.DONE);
-            byStatus.and(byPriority);
-
-            Predicate<Task> filter = TaskQuery.byStatus(Status.DONE)
-                    .and(TaskQuery.byPriority(Priority.LOW));
-
-
-            Comparator<Task> sort = TaskQuery.sortByPriority().thenComparing(TaskQuery.sortByPriority());
-
-            taskRepository.findWithFilters(filter,sort);
 
             return GetTaskResult.success(tasks, "Found " + tasks.size() + " tasks(s)\n");
         } catch (Exception e) {

@@ -9,6 +9,9 @@ import java.util.Comparator;
 import java.util.function.Predicate;
 
 public final class TaskQuery {
+
+    private TaskQuery() {};
+    
     public static Predicate<Task> byStatus(Status status) {
         return task -> task.getStatus().equals(status);
     }
