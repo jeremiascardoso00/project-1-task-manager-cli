@@ -6,75 +6,49 @@ import org.example.domain.model.Task;
 
 import java.time.LocalDate;
 import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.function.Predicate;
 
-@FunctionalInterface
-public interface TaskQuery {
-
-    //abstract method
-    Stream<Task> apply(Stream<Task> taskStream);
-
-    static TaskQuery byStatus(Status status) {
-        return taskStream -> taskStream.filter(task -> task.getStatus() == status);
+public final class TaskQuery {
+    public static Predicate<Task> byStatus(Status status) {
+        return task -> task.getStatus().equals(status);
     }
 
-    static TaskQuery byPriority(Priority priority) {
-        //taskStream: parameter of the apply method
-        // taskStream.filter() is the return object
-        // so this implementation is having Stream<Task> in parameter and returning Stream<Task>
-        // this is a implementation of the abstract class apply in a static method return
-        return taskStream -> taskStream.filter(task -> task.getPriority() == priority);
+    public static Predicate<Task> byPriority(Priority priority) {
+        return task -> task.getPriority() == priority;
     }
 
-    static TaskQuery search (String searchParam) {
+    public static Predicate<Task> search (String searchParam) {
         if (searchParam == null || searchParam.trim().isEmpty()) {
-            return stream -> stream;
+            return task -> false;
         }
 
-        return taskStream -> taskStream.filter(task -> {
+        return task -> {
             var description = task.getDescription();
             return task.getTitle().toLowerCase().contains(searchParam) || (description != null && description.toLowerCase().contains(searchParam));
-        });
-    }
-
-    static TaskQuery sortByPriority() {
-        return taskStream -> taskStream.sorted(Comparator.comparing(Task::getPriority));
-    }
-    static TaskQuery sortByPriorityDesc() {
-        return taskStream -> taskStream.sorted(Comparator.comparing(Task::getPriority).reversed());
-    }
-
-    static TaskQuery sortByCreationDate() {
-        return taskStream -> taskStream.sorted(Comparator.comparing(Task::getCreatedAt));
-    }
-    static TaskQuery sortByCreationDateDesc() {
-        return taskStream -> taskStream.sorted(Comparator.comparing(Task::getCreatedAt).reversed());
-    }
-    static TaskQuery sortByTitle() {
-        return stream -> stream.sorted(Comparator.comparing(Task::getTitle));
-    }
-    static TaskQuery betweenDates(LocalDate start, LocalDate end) {
-        return stream -> stream.filter(task ->
-                !task.getCreatedAt().toLocalDate().isBefore(start) &&
-                        !task.getCreatedAt().toLocalDate().isAfter(end)
-        );
-    }
-
-    default TaskQuery and(TaskQuery other) {
-        return stream -> this.apply(other.apply(stream));
-    }
-
-    default TaskQuery or(TaskQuery other) {
-        return stream -> {
-            List<Task> result1 = this.apply(stream).collect(Collectors.toList());
-            List<Task> result2 = other.apply(stream).collect(Collectors.toList());
-
-            return Stream.concat(result1.stream(), result2.stream())
-                    .distinct();
         };
     }
+
+    public static Predicate<Task> betweenDates(LocalDate start, LocalDate end) {
+        return task ->
+                !task.getCreatedAt().toLocalDate().isBefore(start) &&
+                        !task.getCreatedAt().toLocalDate().isAfter(end);
+    }
+
+    public static Comparator<Task> sortByPriority() {
+        return Comparator.comparing(Task::getPriority);
+
+    }
+    public static Comparator<Task> sortByPriorityDesc() {
+        return Comparator.comparing(Task::getPriority).reversed();
+    }
+
+    public static Comparator<Task> sortByCreationDate() {
+        return Comparator.comparing(Task::getCreatedAt);
+    }
+    public static Comparator<Task> sortByCreationDateDesc() {
+        return Comparator.comparing(Task::getCreatedAt).reversed();
+    }
+    public static Comparator<Task> sortByTitle() {
+        return Comparator.comparing(Task::getTitle);
+    }
 }
-
-

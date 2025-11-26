@@ -7,6 +7,7 @@ import org.example.infrastructure.persistence.jsonconfig.JsonConfig;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public abstract class JsonRepository<T> {
@@ -45,7 +46,10 @@ public abstract class JsonRepository<T> {
             JavaType javaType = objectMapper.getTypeFactory()
                     .constructCollectionType(List.class, type);
 
-            return objectMapper.readValue(jsonData, javaType);
+            List<T> result = objectMapper.readValue(jsonData, javaType);
+
+            return result != null
+                    ? result: Collections.emptyList();
 
         } catch (Exception e) {
             throw new RuntimeException("Error loading data from: " + filePath, e);

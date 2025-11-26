@@ -1,14 +1,12 @@
 package org.example.infrastructure.persistence;
 
-import org.example.application.queries.TaskQuery;
 import org.example.domain.model.Task;
 import org.example.domain.model.TaskRepository;
 
 import java.nio.file.Path;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.function.Predicate;
 
 public class JsonTaskRepository extends JsonRepository<Task> implements TaskRepository {
 
@@ -41,19 +39,15 @@ public class JsonTaskRepository extends JsonRepository<Task> implements TaskRepo
 
     @Override
     public List<Task> findAll() {
-        List<Task> tasks = loadAll();
-        return tasks != null? tasks: Collections.emptyList();
+        return loadAll();
     }
 
     @Override
-    public List<Task> findWithFilters(TaskQuery query){
-
-        List<Task> tasks = loadAll();
-
-        Stream<Task> taskStream = tasks.stream();
-
-        Stream<Task> filteredStream = query.apply(taskStream);
-
-        return filteredStream.collect(Collectors.toList());
+    public List<Task> findWithFilters(Predicate<Task> query, Comparator<Task> sort) {
+       return loadAll()
+               .stream()
+               .filter(query)
+               .sorted(sort)
+               .toList();
     }
 }

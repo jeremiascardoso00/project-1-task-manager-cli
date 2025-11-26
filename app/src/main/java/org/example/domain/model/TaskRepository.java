@@ -1,11 +1,11 @@
 package org.example.domain.model;
 
-import org.example.application.queries.TaskQuery;
-
+import java.util.Comparator;
 import java.util.List;
+import java.util.function.Predicate;
 
 public interface TaskRepository {
     Task save(Task task);
     List<Task> findAll();
-    List<Task> findWithFilters(TaskQuery query);
+    List<Task> findWithFilters(Predicate<Task> filter,  Comparator<Task> sort);
 }
