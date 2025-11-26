@@ -39,8 +39,8 @@ public class CreateTaskCommandHandler {
         GetAvailableBoardsResult getAvailableBoardsResult = getAvailableBoardsUseCase.execute();
 
         //move outside CreateTaskCommandHandler
-        if (getAvailableBoardsResult.hasBoards()) {
-            this.availableBoards = getAvailableBoardsResult.getBoards();
+        if (getAvailableBoardsResult.hasItems()) {
+            this.availableBoards = getAvailableBoardsResult.getItems();
             selectBoard();
         }
 

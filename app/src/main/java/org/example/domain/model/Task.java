@@ -1,5 +1,8 @@
 package org.example.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
@@ -19,6 +22,21 @@ public class Task {
         this.status = validateStatus(status);
         this.priority = validatePriority(priority);
         this.createdAt = LocalDateTime.now();
+    }
+
+    @JsonCreator
+    private Task(@JsonProperty("id") String id,
+                 @JsonProperty("title") String title,
+                 @JsonProperty("description") String description,
+                 @JsonProperty("status") Status status,
+                 @JsonProperty("priority") Priority priority,
+                 @JsonProperty("createdAt") LocalDateTime createdAt){
+        this.id = id;
+        this.title = validateTitle(title).trim();
+        this.description = validateDescription(description);
+        this.status = validateStatus(status);
+        this.priority = validatePriority(priority);
+        this.createdAt = createdAt;
     }
 
     public static Task newTask(String id, String title, String description, Status status, Priority priority) {
