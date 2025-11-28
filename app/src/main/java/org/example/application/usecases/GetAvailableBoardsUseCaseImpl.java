@@ -1,27 +1,27 @@
 package org.example.application.usecases;
 
-import org.example.application.usecases.models.responses.GetAvailableBoardsResult;
+import org.example.application.usecases.models.responses.GetBoardResult;
 import org.example.domain.model.Board;
 import org.example.domain.model.BoardRepository;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.function.Predicate;
 
 
-public class GetAvailableBoardsUseCaseImpl implements GetAvailableBoardsUseCase {
+public class GetAvailableBoardsUseCaseImpl implements GetBoardsUseCase {
 
     private BoardRepository boardRepository;
+    private final GetBoardResult resultFactory;
 
-    public GetAvailableBoardsUseCaseImpl(BoardRepository boardRepository) {
+
+    public GetAvailableBoardsUseCaseImpl(BoardRepository boardRepository, GetBoardResult resultFactory) {
         this.boardRepository = boardRepository;
+        this.resultFactory = resultFactory;
     }
 
     @Override
-    public GetAvailableBoardsResult execute() {
-        return execute(null, null);
-    }
-
-    @Override
-    public GetAvailableBoardsResult execute(Predicate<Board> filter, Comparator<Board> sorter) {
+    public GetBoardResult execute(Predicate<Board> filter, Comparator<Board> sorter) {
         try {
             List<Board> boards;
             if (filter == null && sorter == null) {
@@ -37,12 +37,12 @@ public class GetAvailableBoardsUseCaseImpl implements GetAvailableBoardsUseCase 
             }
 
             if (boards == null || boards.isEmpty()){
-                return GetAvailableBoardsResult.empty("No boards available. Would you like to create one?");
+                return resultFactory.empty("No boards available. Would you like to create one?");
             }
 
-            return GetAvailableBoardsResult.success(boards, "Found " + boards.size() + " board(s)");
+            return resultFactory.success(boards, "Found " + boards.size() + " board(s)");
         } catch (Exception e) {
-            return GetAvailableBoardsResult.error("Error loading boards: " + e.getMessage());
+            return resultFactory.error("Error loading boards: " + e.getMessage());
         }
     }
 }

@@ -1,7 +1,7 @@
 package org.example.infrastructure.handlers.board;
 
-import org.example.application.usecases.GetAvailableBoardsUseCase;
-import org.example.application.usecases.models.responses.GetAvailableBoardsResult;
+import org.example.application.usecases.GetBoardsUseCase;
+import org.example.application.usecases.models.responses.GetBoardResult;
 import org.example.application.queries.BoardQuery;
 import org.example.domain.model.Board;
 
@@ -13,14 +13,14 @@ import java.util.Scanner;
 import java.util.function.Predicate;
 
 public class GetAvailableBoardsHandler {
-    private final GetAvailableBoardsUseCase getAvailableBoardsUseCase;
+    private final GetBoardsUseCase getBoardsUseCase;
 
     private final Scanner inputScanner;
     private List<Board> availableBoards;
 
-    public GetAvailableBoardsHandler(Scanner inputScanner, GetAvailableBoardsUseCase getAvailableBoardsUseCase) {
+    public GetAvailableBoardsHandler(Scanner inputScanner, GetBoardsUseCase getBoardsUseCase) {
         this.inputScanner = inputScanner;
-        this.getAvailableBoardsUseCase = getAvailableBoardsUseCase;
+        this.getBoardsUseCase = getBoardsUseCase;
         this.availableBoards = null;
     }
 
@@ -46,7 +46,7 @@ public class GetAvailableBoardsHandler {
             sorter = handleSorting();
         }
 
-        GetAvailableBoardsResult getAvailableBoardsResult = getAvailableBoardsUseCase.execute(filter, sorter);
+        GetBoardResult getAvailableBoardsResult = getBoardsUseCase.execute(filter, sorter);
         System.out.println(getAvailableBoardsResult.getMessage());
         if (getAvailableBoardsResult.hasItems()) {
             System.out.println(getAvailableBoardsResult.getItems());
