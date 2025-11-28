@@ -50,9 +50,9 @@ package org.example;
          BoardRepository boardRepository = new JsonBoardRepository(DataConfig.getBoardsFilePath());
 
          // 2. Setup Use Cases
-         CreateTaskUseCase createTaskUseCase = new CreateTaskUseCaseImpl(taskRepository);
+         CreateTaskUseCase createTaskUseCase = new CreateTaskUseCaseImpl(taskRepository, getTaskResultBuilder);
          GetBoardsUseCase getBoardsUseCase = new GetAvailableBoardsUseCaseImpl(boardRepository,getBoardResultBuilder);
-         CreateBoardUseCase createBoardUseCase = new CreateBoardUseCaseImpl(boardRepository);
+         CreateBoardUseCase createBoardUseCase = new CreateBoardUseCaseImpl(boardRepository, getBoardResultBuilder);
          GetTasksUseCase getTasksUseCase = new GetTasksUseCaseImpl(taskRepository,getTaskResultBuilder);
 
          // 3. Setup Command Handlers

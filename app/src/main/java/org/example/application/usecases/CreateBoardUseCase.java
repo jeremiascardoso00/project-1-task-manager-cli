@@ -1,7 +1,8 @@
 package org.example.application.usecases;
 
+import org.example.application.usecases.models.responses.GetBoardResult;
 import org.example.domain.model.Board;
 
 public interface CreateBoardUseCase {
-    Board execute(String name);
+    GetBoardResult execute(String name);
 }

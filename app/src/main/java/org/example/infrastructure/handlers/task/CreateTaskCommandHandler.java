@@ -3,6 +3,7 @@ package org.example.infrastructure.handlers.task;
 import org.example.application.usecases.CreateTaskUseCase;
 import org.example.application.usecases.GetBoardsUseCase;
 import org.example.application.usecases.models.responses.GetBoardResult;
+import org.example.application.usecases.models.responses.GetTaskResult;
 import org.example.domain.model.Board;
 import org.example.domain.model.Priority;
 import org.example.domain.model.Status;
@@ -38,15 +39,17 @@ public class CreateTaskCommandHandler {
 
         GetBoardResult getAvailableBoardsResult = getBoardsUseCase.execute();
 
-        //move outside CreateTaskCommandHandler
         if (getAvailableBoardsResult.hasItems()) {
             this.availableBoards = getAvailableBoardsResult.getItems();
             selectBoard();
         }
 
-
-        Task task = this.createTaskUseCase.execute(title, description, status, priority);
-        System.out.println("Task created successfully: " + task.getTitle());
+        GetTaskResult result = this.createTaskUseCase.execute(title, description, status, priority);
+        if (result.isSuccess()) {
+            System.out.println("Task created successfully: " + result.getItems().get(0).getTitle());
+        } else {
+            System.out.println("Failed to create task: " + result.getMessage());
+        }
     }
 
     private Status selectStatus() {
@@ -118,6 +121,4 @@ public class CreateTaskCommandHandler {
         }
         return selectedBoard;
     }
-
-
 }
