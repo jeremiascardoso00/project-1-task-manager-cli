@@ -12,9 +12,12 @@ import java.util.function.Predicate;
 public class GetTasksUseCaseImpl implements GetTasksUseCase{
 
     private final TaskRepository taskRepository;
+    private final GetTaskResult resultFactory;
 
-    public GetTasksUseCaseImpl(TaskRepository taskRepository) {
+
+    public GetTasksUseCaseImpl(TaskRepository taskRepository, GetTaskResult resultFactory) {
         this.taskRepository = taskRepository;
+        this.resultFactory = resultFactory;
     }
 
     @Override
@@ -34,12 +37,12 @@ public class GetTasksUseCaseImpl implements GetTasksUseCase{
             }
 
             if (tasks == null || tasks.isEmpty()){
-                return GetTaskResult.empty("No tasks available. Would you like to create one?");
+                return resultFactory.empty("No tasks available. Would you like to create one?");
             }
 
-            return GetTaskResult.success(tasks, "Found " + tasks.size() + " tasks(s)\n");
+            return resultFactory.success(tasks, "Found " + tasks.size() + " tasks(s)\n");
         } catch (Exception e) {
-            return GetTaskResult.error("Error loading tasks: " + e.getMessage());
+            return resultFactory.error("Error loading tasks: " + e.getMessage());
         }
     }
 }

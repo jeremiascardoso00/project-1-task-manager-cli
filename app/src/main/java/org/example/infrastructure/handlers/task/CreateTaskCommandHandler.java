@@ -1,8 +1,9 @@
 package org.example.infrastructure.handlers.task;
 
 import org.example.application.usecases.CreateTaskUseCase;
-import org.example.application.usecases.GetAvailableBoardsUseCase;
-import org.example.application.usecases.models.responses.GetAvailableBoardsResult;
+import org.example.application.usecases.GetBoardsUseCase;
+import org.example.application.usecases.models.responses.GetBoardResult;
+import org.example.application.usecases.models.responses.GetTaskResult;
 import org.example.domain.model.Board;
 import org.example.domain.model.Priority;
 import org.example.domain.model.Status;
@@ -14,14 +15,14 @@ import java.util.Scanner;
 public class CreateTaskCommandHandler {
     private final Scanner inputScanner;
     private final CreateTaskUseCase createTaskUseCase;
-    private final GetAvailableBoardsUseCase getAvailableBoardsUseCase;
+    private final GetBoardsUseCase getBoardsUseCase;
 
     private List<Board> availableBoards;
 
-    public CreateTaskCommandHandler(Scanner inputScanner, CreateTaskUseCase createTaskUseCase, GetAvailableBoardsUseCase getAvailableBoardsUseCase) {
+    public CreateTaskCommandHandler(Scanner inputScanner, CreateTaskUseCase createTaskUseCase, GetBoardsUseCase getBoardsUseCase) {
         this.inputScanner = inputScanner;
         this.createTaskUseCase = createTaskUseCase;
-        this.getAvailableBoardsUseCase = getAvailableBoardsUseCase;
+        this.getBoardsUseCase = getBoardsUseCase;
         this.availableBoards = null;
     }
 
@@ -36,17 +37,19 @@ public class CreateTaskCommandHandler {
 
         Priority priority = selectPriority();
 
-        GetAvailableBoardsResult getAvailableBoardsResult = getAvailableBoardsUseCase.execute();
+        GetBoardResult getAvailableBoardsResult = getBoardsUseCase.execute();
 
-        //move outside CreateTaskCommandHandler
         if (getAvailableBoardsResult.hasItems()) {
             this.availableBoards = getAvailableBoardsResult.getItems();
             selectBoard();
         }
 
-
-        Task task = this.createTaskUseCase.execute(title, description, status, priority);
-        System.out.println("Task created successfully: " + task.getTitle());
+        GetTaskResult result = this.createTaskUseCase.execute(title, description, status, priority);
+        if (result.isSuccess()) {
+            System.out.println("Task created successfully: " + result.getItems().get(0).getTitle());
+        } else {
+            System.out.println("Failed to create task: " + result.getMessage());
+        }
     }
 
     private Status selectStatus() {
@@ -118,6 +121,4 @@ public class CreateTaskCommandHandler {
         }
         return selectedBoard;
     }
-
-
 }

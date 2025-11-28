@@ -17,7 +17,6 @@ public abstract class BaseGetResult<T> {
         this.hasItems = !this.items.isEmpty();
     }
 
-
     // Getters
     public boolean isSuccess() { return success; }
     public String getMessage() { return message; }
@@ -25,11 +24,11 @@ public abstract class BaseGetResult<T> {
     public boolean hasItems() { return hasItems; }
 
     // Optional-based methods
-    public Optional<List<T>> getBoardsOptional() {
+    public Optional<List<T>> getItemsOptional() {
         return hasItems ? Optional.of(items) : Optional.empty();
     }
 
-    public Optional<T> getFirstBoard() {
+    public Optional<T> getFirstItem() {
         return hasItems ? Optional.of(items.get(0)) : Optional.empty();
     }
 
@@ -41,5 +40,4 @@ public abstract class BaseGetResult<T> {
     public int getCount() {
         return items.size();
     }
-
 }
