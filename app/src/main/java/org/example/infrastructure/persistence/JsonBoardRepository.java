@@ -4,8 +4,9 @@ import org.example.domain.model.*;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.function.Predicate;
 
 public class JsonBoardRepository extends JsonRepository<Board> implements BoardRepository {
 
@@ -16,10 +17,12 @@ public class JsonBoardRepository extends JsonRepository<Board> implements BoardR
     @Override
     public Board save(Board newBoard){
 
-        var found = loadAll()
-        .stream()
-        .anyMatch(item -> item.getId().equals(newBoard.getId()));
+        List<Board> boardList = loadAll();
 
+        var found = boardList.
+                stream().
+                anyMatch(item -> item.getId().
+                        equals(newBoard.getId()));
 
         if (!found){
             boardList.add(newBoard);

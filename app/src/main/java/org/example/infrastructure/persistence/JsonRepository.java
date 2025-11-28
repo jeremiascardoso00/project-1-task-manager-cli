@@ -37,7 +37,6 @@ public abstract class JsonRepository<T> {
     protected List<T> loadAll() {
         try {
             byte[] jsonData = Files.readAllBytes(filePath);
-            System.out.println(jsonData);
 
             if (jsonData.length == 0) {
                 return new ArrayList<>();
