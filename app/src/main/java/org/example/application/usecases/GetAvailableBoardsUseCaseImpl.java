@@ -1,5 +1,6 @@
 package org.example.application.usecases;
 
+import org.example.application.queries.BoardQuery;
 import org.example.application.usecases.models.responses.GetBoardResult;
 import org.example.domain.model.Board;
 import org.example.domain.model.BoardRepository;
@@ -31,7 +32,7 @@ public class GetAvailableBoardsUseCaseImpl implements GetBoardsUseCase {
                     filter = board -> true;
                 }
                 if (sorter == null) {
-                    sorter = org.example.application.queries.BoardQuery.sortByCreationDateDesc();
+                    sorter = BoardQuery.sortByCreationDateDesc();
                 }
                 boards = this.boardRepository.findWithFilters(filter, sorter);
             }

@@ -3,9 +3,7 @@ package org.example.infrastructure.persistence;
 import org.example.domain.model.*;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.function.Predicate;
 
 public class JsonBoardRepository extends JsonRepository<Board> implements BoardRepository {
@@ -17,7 +15,13 @@ public class JsonBoardRepository extends JsonRepository<Board> implements BoardR
     @Override
     public Board save(Board newBoard){
 
-        List<Board> boardList = loadAll();
+        Optional<List<Board>> result = loadAll();
+
+        List<Board> boardList = Collections.emptyList();
+
+        if (result.isPresent()){
+            boardList = result.get();
+        }
 
         var found = boardList.
                 stream().
@@ -35,16 +39,23 @@ public class JsonBoardRepository extends JsonRepository<Board> implements BoardR
 
     @Override
     public List<Board> findAll(){
-        return loadAll();
+        Optional<List<Board>> result = loadAll();
+
+        return result.orElse(Collections.emptyList());
     }
 
     @Override
     public List<Board> findWithFilters(Predicate<Board> query, Comparator<Board> sort) {
-        return loadAll()
-                .stream()
-                .filter(query)
-                .sorted(sort)
-                .toList();
+
+        Optional<List<Board>> result = loadAll();
+
+        return result
+            .map(boards -> boards
+                        .stream()
+                        .filter(query)
+                        .sorted(sort)
+                        .toList())
+            .orElse(Collections.emptyList());
     }
 
     public ArrayList<Task> getAllTasks() {

@@ -7,8 +7,8 @@ import org.example.infrastructure.persistence.jsonconfig.JsonConfig;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 public abstract class JsonRepository<T> {
     protected final ObjectMapper objectMapper;
@@ -34,12 +34,12 @@ public abstract class JsonRepository<T> {
         }
     }
 
-    protected List<T> loadAll() {
+    protected Optional<List<T>> loadAll() {
         try {
             byte[] jsonData = Files.readAllBytes(filePath);
 
             if (jsonData.length == 0) {
-                return new ArrayList<>();
+                return Optional.empty();
             }
 
             JavaType javaType = objectMapper.getTypeFactory()
@@ -47,8 +47,7 @@ public abstract class JsonRepository<T> {
 
             List<T> result = objectMapper.readValue(jsonData, javaType);
 
-            return result != null
-                    ? result: Collections.emptyList();
+            return Optional.of(result);
 
         } catch (Exception e) {
             throw new RuntimeException("Error loading data from: " + filePath, e);

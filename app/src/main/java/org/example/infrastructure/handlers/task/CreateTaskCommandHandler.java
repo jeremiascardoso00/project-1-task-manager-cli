@@ -7,7 +7,6 @@ import org.example.application.usecases.models.responses.GetTaskResult;
 import org.example.domain.model.Board;
 import org.example.domain.model.Priority;
 import org.example.domain.model.Status;
-import org.example.domain.model.Task;
 
 import java.util.List;
 import java.util.Scanner;
@@ -37,7 +36,7 @@ public class CreateTaskCommandHandler {
 
         Priority priority = selectPriority();
 
-        GetBoardResult getAvailableBoardsResult = getBoardsUseCase.execute();
+        GetBoardResult getAvailableBoardsResult = getBoardsUseCase.execute(null, null);
 
         if (getAvailableBoardsResult.hasItems()) {
             this.availableBoards = getAvailableBoardsResult.getItems();
